@@ -27,12 +27,31 @@ async function run() {
     try {
 
         const bookCategoriesCollection = client.db('book-trekker').collection('book-categories');
+        const allbooksCollection = client.db('book-trekker').collection('all-books');
 
         app.get('/categories', async (req, res) => {
             const query = {}
             const cursor = bookCategoriesCollection.find(query);
             const bookCategories = await cursor.toArray();
             res.send(bookCategories);
+        });
+
+        app.get('/allbookscategory', async (req, res) => {
+            const CategoryId = req.params.CategoryId;
+            const query = {}
+            const cursor = allbooksCollection.find(query);
+            const bookCategories = await cursor.toArray();
+            res.send(bookCategories);
+
+        });
+
+        app.get('/allbookscategory/:CategoryId', async (req, res) => {
+            const CategoryId = req.params.CategoryId;
+            const query = { CategoryId: CategoryId };
+            const cursor = await allbooksCollection.find(query);
+            const single_category = await cursor.toArray();
+            res.send(single_category);
+
         });
 
     }

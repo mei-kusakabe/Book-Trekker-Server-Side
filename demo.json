@@ -1,18 +1,18 @@
 [
     {
-        "Category_id": "01",
+        "CategoryId": "01",
         "title": "CHILDREN'S BOOKS",
         "img": "https://media.npr.org/assets/img/2020/08/25/shapiro_npr2_wide-27c7505f6eb0185ab39fe8b7cc5167ea218f3990-s900-c85.webp",
         "description": "Discover the best children's books for kids of all ages including board books, picture books, book series, and chapter books."
     },
     {
-        "Category_id": "02",
+        "CategoryId": "02",
         "title": "LITERATURE & FICTION",
         "img": "https://images-workbench.99static.com/SK1f17K1c4EdeGzyY5y3Jd3IHds=/99designs-contests-attachments/59/59951/attachment_59951845",
         "description": "Discover the best literature and fiction books for all ages including board books, picture books, book series, and chapter books."
     },
     {
-        "Category_id": "03",
+        "CategoryId": "03",
         "title": "RELIGION & SPIRITUALITY",
         "img": "https://i.pinimg.com/564x/5e/18/45/5e1845e806e81b7662abfcdc9391e067.jpg",
         "description": "Discover the best religious books for all ages including board books, picture books, book series, and chapter books."
