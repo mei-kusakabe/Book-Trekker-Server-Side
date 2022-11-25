@@ -22,9 +22,18 @@ console.log(process.env.DB_PASS)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
+
 async function run() {
     try {
 
+        const bookCategoriesCollection = client.db('book-trekker').collection('book-categories');
+
+        app.get('/categories', async (req, res) => {
+            const query = {}
+            const cursor = bookCategoriesCollection.find(query);
+            const bookCategories = await cursor.toArray();
+            res.send(bookCategories);
+        });
 
     }
     finally {
