@@ -28,6 +28,8 @@ async function run() {
 
         const bookCategoriesCollection = client.db('book-trekker').collection('book-categories');
         const allbooksCollection = client.db('book-trekker').collection('all-books');
+        const bookingCollection = client.db('book-trekker').collection('bookingCollection');
+
 
         app.get('/categories', async (req, res) => {
             const query = {}
@@ -53,6 +55,12 @@ async function run() {
             res.send(single_category);
 
         });
+
+        app.post('/booking', async (req, res) => {
+            const booking = req.body;
+            const result = await bookingCollection.insertOne(booking);
+            res.send(result);
+        })
 
     }
     finally {
