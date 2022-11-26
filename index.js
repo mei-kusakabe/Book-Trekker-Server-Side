@@ -71,12 +71,34 @@ async function run() {
 
         });
 
+
+        // app.get('/bookings', async (req, res) => {
+        //     // const email = req.query.email;
+        //     // console.log(email);
+        //     // const query = { email: email };
+        //     // const cursor = await bookingCollection.find(query);
+        //     // const bookings = await cursor.toArray();
+        //     // res.send(bookings);
+
+        //     const query = {}
+        //     const cursor = bookingCollection.find(query);
+        //     const bookCategories = await cursor.toArray();
+        //     res.send(bookCategories);
+
+        // });
+
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
 
+
+        app.post('/allbookscategory', async (req, res) => {
+            const booking = req.body;
+            const result = await allbooksCollection.insertOne(booking);
+            res.send(result);
+        })
 
 
     }
