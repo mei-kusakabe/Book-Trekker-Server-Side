@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-//const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 require('dotenv').config();
@@ -10,6 +10,23 @@ const port = process.env.PORT || 5000;
 // middle wares
 app.use(cors());
 app.use(express.json());
+
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).send({ message: 'unauthorized access' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+        if (err) {
+            return res.status(403).send({ message: 'Forbidden access' });
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
 
 
 
@@ -29,6 +46,12 @@ async function run() {
         const bookCategoriesCollection = client.db('book-trekker').collection('book-categories');
         const allbooksCollection = client.db('book-trekker').collection('all-books');
         const bookingCollection = client.db('book-trekker').collection('bookingCollection');
+
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
+            res.send({ token })
+        })
 
 
         app.get('/categories', async (req, res) => {
