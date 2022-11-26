@@ -46,6 +46,9 @@ async function run() {
         const bookCategoriesCollection = client.db('book-trekker').collection('book-categories');
         const allbooksCollection = client.db('book-trekker').collection('all-books');
         const bookingCollection = client.db('book-trekker').collection('bookingCollection');
+        const usersCollection = client.db('book-trekker').collection('usersCollection');
+        const usersCollection2 = client.db('book-trekker').collection('usersCollection2');
+
 
         app.post('/jwt', (req, res) => {
             const user = req.body;
@@ -122,6 +125,40 @@ async function run() {
             const result = await allbooksCollection.insertOne(booking);
             res.send(result);
         })
+
+
+        app.post('/users', async (req, res) => {
+            const users = req.body;
+            console.log(users);
+            const result = await usersCollection.insertOne(users);
+            res.send(result);
+        })
+
+
+        app.get('/users', async (req, res) => {
+
+            const email = req.query.email;
+            console.log(email);
+            const query = { email: email };
+            const cursor = await usersCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+
+            // const query = {}
+            // const cursor = usersCollection.find(query);
+            // const users = await cursor.toArray();
+            // res.send(users);
+
+        });
+
+
+        // app.get('/users/:email', async (req, res) => {
+        //     const email = req.params.email;
+        //     const query = { email: ObjectId(email) };
+        //     const single_review = await usersCollection.findOne(query);
+        //     res.send(single_review);
+
+        // });
 
 
     }
