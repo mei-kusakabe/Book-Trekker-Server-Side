@@ -11,6 +11,8 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+//old
+
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
 
@@ -27,6 +29,26 @@ function verifyJWT(req, res, next) {
         next();
     })
 }
+
+//new
+// function verifyJWT(req, res, next) {
+
+//     const authHeader = req.headers.authorization;
+//     if (!authHeader) {
+//         return res.status(401).send('unauthorized access');
+//     }
+
+//     const token = authHeader.split(' ')[1];
+
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+//         if (err) {
+//             return res.status(403).send({ message: 'forbidden access' })
+//         }
+//         req.decoded = decoded;
+//         next();
+//     })
+
+// }
 
 
 
@@ -82,43 +104,35 @@ async function run() {
 
         });
 
-        app.get('/bookings', async (req, res) => {
-            // const email = req.query.email;
-            // console.log(email);
-            // const query = { email: email };
-            // const cursor = await bookingCollection.find(query);
-            // const bookings = await cursor.toArray();
-            // res.send(bookings);
+
+        //all orders
+
+        app.get('/allbookings', async (req, res) => {
 
             const query = {}
             const cursor = bookingCollection.find(query);
-            const bookCategories = await cursor.toArray();
-            res.send(bookCategories);
+            const mybook = await cursor.toArray();
+            res.send(mybook);
 
         });
 
+        //specific email orders
 
-        // app.get('/bookings', async (req, res) => {
-        //     // const email = req.query.email;
-        //     // console.log(email);
-        //     // const query = { email: email };
-        //     // const cursor = await bookingCollection.find(query);
-        //     // const bookings = await cursor.toArray();
-        //     // res.send(bookings);
+        app.get('/bookings', async (req, res) => {
 
-        //     const query = {}
-        //     const cursor = bookingCollection.find(query);
-        //     const bookCategories = await cursor.toArray();
-        //     res.send(bookCategories);
 
-        // });
+            const query = { email: req.query.email }
+            const cursor = bookingCollection.find(query);
+            const mybook = await cursor.toArray();
+            res.send(mybook);
+
+        });
 
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
-
 
         app.post('/allbookscategory', async (req, res) => {
             const booking = req.body;
@@ -127,12 +141,32 @@ async function run() {
         })
 
 
-        app.post('/users', async (req, res) => {
-            const users = req.body;
-            console.log(users);
-            const result = await usersCollection.insertOne(users);
-            res.send(result);
-        })
+
+        app.get('/jwt', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            if (user) {
+                const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+                return res.send({ accessToken: token });
+            }
+            res.status(403).send({ accessToken: '' })
+        });
+
+
+        //alluser
+
+
+        app.get('/allusers', async (req, res) => {
+
+            const query = {}
+            const cursor = usersCollection.find(query);
+            const mybook = await cursor.toArray();
+            res.send(mybook);
+
+        });
+
+        //specific users filtered with email
 
 
         app.get('/users', async (req, res) => {
@@ -144,21 +178,32 @@ async function run() {
             const users = await cursor.toArray();
             res.send(users);
 
-            // const query = {}
-            // const cursor = usersCollection.find(query);
-            // const users = await cursor.toArray();
-            // res.send(users);
+
+        });
+
+        //specific users  usertype - Buyer -Seller
+
+        app.get('/userstype', async (req, res) => {
+
+
+            const query = { usertype: req.query.usertype }
+            const cursor = usersCollection.find(query);
+            const mybook = await cursor.toArray();
+            res.send(mybook);
 
         });
 
 
-        // app.get('/users/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     const query = { email: ObjectId(email) };
-        //     const single_review = await usersCollection.findOne(query);
-        //     res.send(single_review);
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            console.log(user);
+            // TODO: make sure you do not enter duplicate user email
+            // only insert users if the user doesn't exist in the database
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        });
 
-        // });
+
 
 
     }
