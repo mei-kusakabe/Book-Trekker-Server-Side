@@ -69,8 +69,8 @@ async function run() {
         const allbooksCollection = client.db('book-trekker').collection('all-books');
         const bookingCollection = client.db('book-trekker').collection('bookingCollection');
         const usersCollection = client.db('book-trekker').collection('usersCollection');
-        const usersCollection2 = client.db('book-trekker').collection('usersCollection2');
-
+        // const usersCollection2 = client.db('book-trekker').collection('usersCollection2');
+        const advertiseCollection = client.db('book-trekker').collection('advertiseCollection');
 
         app.post('/jwt', (req, res) => {
             const user = req.body;
@@ -245,19 +245,31 @@ async function run() {
         //Advertisement
 
 
-        // app.post('/addCollection', async (req, res) => {
-        //     const addvertise = req.body;
-        //     console.log(addvertise);
-        //     const result = await addCollection.insertOne(addvertise);
-        //     res.send(result);
-        // });
+        app.put('/adCollection', async (req, res) => {
+            const addvertise = req.body;
+            console.log(addvertise);
+            const option = { upsert: true };
+            const Updateadd = {
+                $set: {
+                    img: addvertise.img,
+                    saleprice: addvertise.saleprice,
+                    condition: addvertise.condition,
+                    product: addvertise.product
+                }
+            }
+            const result = await advertiseCollection.updateOne(addvertise, Updateadd, option);
+            res.send(result);
+        });
 
-        // app.get('/addCollection', async (req, res) => {
-        //     const query = {};
-        //     const cursor = addCollection.find(query);
-        //     const add = await cursor.toArray();
-        //     res.send(add);
-        // });
+        app.get('/adCollection', async (req, res) => {
+            const query = {};
+            const cursor = advertiseCollection.find(query);
+            const add = await cursor.toArray();
+            res.send(add);
+        });
+
+
+        //myproducts fetch
 
 
         app.get('/allbookscategory/seller/:SellerName', async (req, res) => {
