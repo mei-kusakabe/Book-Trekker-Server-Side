@@ -234,6 +234,43 @@ async function run() {
             res.send({ isAdmin: user?.role === 'admin' });
         })
 
+        app.get('/allusers/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isSeller: user?.role === 'seller' });
+        })
+
+
+        //Advertisement
+
+
+        // app.post('/addCollection', async (req, res) => {
+        //     const addvertise = req.body;
+        //     console.log(addvertise);
+        //     const result = await addCollection.insertOne(addvertise);
+        //     res.send(result);
+        // });
+
+        // app.get('/addCollection', async (req, res) => {
+        //     const query = {};
+        //     const cursor = addCollection.find(query);
+        //     const add = await cursor.toArray();
+        //     res.send(add);
+        // });
+
+
+        app.get('/allbookscategory/seller/:SellerName', async (req, res) => {
+
+            const SellerName = req.params.SellerName;
+            const query = { SellerName }
+            console.log(SellerName);
+            const cursor = await allbooksCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+
+        });
+
 
 
 
