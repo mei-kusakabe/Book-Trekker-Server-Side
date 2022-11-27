@@ -193,6 +193,30 @@ async function run() {
 
         });
 
+        app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
+
+            // const decodedEmail = req.decoded.email;
+            // const query = { email: decodedEmail };
+            // const user = await usersCollection.findOne(query);
+
+            // if (user?.role !== 'admin') {
+            //     return res.status(403).send({ message: 'forbidden access' })
+            // }
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    role: 'seller'
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
+
+        //edit
 
         app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
 
@@ -215,6 +239,8 @@ async function run() {
             const result = await usersCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
+
+        //edit
 
 
 
@@ -251,10 +277,10 @@ async function run() {
             const option = { upsert: true };
             const Updateadd = {
                 $set: {
-                    img: addvertise.img,
-                    saleprice: addvertise.saleprice,
+                    pic: addvertise.pic,
+                    resalePrice: addvertise.resalePrice,
                     condition: addvertise.condition,
-                    product: addvertise.product
+                    name: addvertise.name
                 }
             }
             const result = await advertiseCollection.updateOne(addvertise, Updateadd, option);
