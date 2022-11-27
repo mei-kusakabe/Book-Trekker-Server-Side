@@ -194,6 +194,30 @@ async function run() {
         });
 
 
+        app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
+
+            // const decodedEmail = req.decoded.email;
+            // const query = { email: decodedEmail };
+            // const user = await usersCollection.findOne(query);
+
+            // if (user?.role !== 'admin') {
+            //     return res.status(403).send({ message: 'forbidden access' })
+            // }
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    role: 'seller'
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
+
+
         app.post('/users', async (req, res) => {
             const user = req.body;
             console.log(user);
