@@ -227,6 +227,13 @@ async function run() {
             res.send(result);
         });
 
+        app.get('/allusers/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
+
 
 
 
