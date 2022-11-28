@@ -30,29 +30,6 @@ function verifyJWT(req, res, next) {
     })
 }
 
-//new
-// function verifyJWT(req, res, next) {
-
-//     const authHeader = req.headers.authorization;
-//     if (!authHeader) {
-//         return res.status(401).send('unauthorized access');
-//     }
-
-//     const token = authHeader.split(' ')[1];
-
-//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-//         if (err) {
-//             return res.status(403).send({ message: 'forbidden access' })
-//         }
-//         req.decoded = decoded;
-//         next();
-//     })
-
-// }
-
-
-
-
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jktjr9b.mongodb.net/?retryWrites=true&w=majority`;
 console.log(uri)
@@ -71,6 +48,7 @@ async function run() {
         const usersCollection = client.db('book-trekker').collection('usersCollection');
         // const usersCollection2 = client.db('book-trekker').collection('usersCollection2');
         const advertiseCollection = client.db('book-trekker').collection('advertiseCollection');
+        const wishCollection = client.db('book-trekker').collection('wishCollection');
 
         app.post('/jwt', (req, res) => {
             const user = req.body;
@@ -195,13 +173,6 @@ async function run() {
 
         app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
 
-            // const decodedEmail = req.decoded.email;
-            // const query = { email: decodedEmail };
-            // const user = await usersCollection.findOne(query);
-
-            // if (user?.role !== 'admin') {
-            //     return res.status(403).send({ message: 'forbidden access' })
-            // }
 
             const id = req.params.id;
             const filter = { _id: ObjectId(id) }
@@ -214,33 +185,6 @@ async function run() {
             const result = await usersCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
-
-
-        //edit
-
-        // app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
-
-        //     // const decodedEmail = req.decoded.email;
-        //     // const query = { email: decodedEmail };
-        //     // const user = await usersCollection.findOne(query);
-
-        //     // if (user?.role !== 'admin') {
-        //     //     return res.status(403).send({ message: 'forbidden access' })
-        //     // }
-
-        //     const id = req.params.id;
-        //     const filter = { _id: ObjectId(id) }
-        //     const options = { upsert: true };
-        //     const updatedDoc = {
-        //         $set: {
-        //             role: 'seller'
-        //         }
-        //     }
-        //     const result = await usersCollection.updateOne(filter, updatedDoc, options);
-        //     res.send(result);
-        // })
-
-        //edit
 
 
 
@@ -260,12 +204,42 @@ async function run() {
             res.send({ isAdmin: user?.role === 'admin' });
         })
 
+        //seller verify - unverifed
+
         app.get('/allusers/seller/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isSeller: user?.role === 'seller' });
+
         })
+
+
+        app.get('/allusers/sellerAll/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            console.log({ isSellerAll: user?.usertype === 'Seller' });
+            res.send({ isSellerAll: user?.usertype === 'Seller' });
+
+        })
+
+
+        app.get('/allusers/Buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            console.log({ isBuyer: user?.inrole === 'Buyer' });
+            res.send({ isBuyer: user?.inrole === 'Buyer' });
+
+        })
+
+        // app.get('/allusers/sellerAll/:usertype', async (req, res) => {
+        //     const usertype = req.params.usertype;
+        //     const query = { usertype }
+        //     const user = await usersCollection.findOne(query);
+        //     res.send({ isSellerAll: user?.usertype === 'Seller' });
+        // })
 
 
         //Advertisement
@@ -308,15 +282,6 @@ async function run() {
 
         });
 
-        //delete buyer
-
-        // app.delete('/orders/:id', verifyJWT, async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: ObjectId(id) };
-        //     const result = await reviewCollection.deleteOne(query);
-        //     res.send(result);
-        // })
-
 
         app.get('/allusers/:id', async (req, res) => {
 
@@ -336,17 +301,52 @@ async function run() {
             res.send(result);
         })
 
-
-        // app.delete('/doctors/:id', verifyJWT, verifyAdmin, async (req, res) => {
-        //     const id = req.params.id;
-        //     const filter = { _id: ObjectId(id) };
-        //     const result = await doctorsCollection.deleteOne(filter);
-        //     res.send(result);
-        // })
+        app.delete('/allbookscategory/:id', async (req, res) => {
 
 
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await allbooksCollection.deleteOne(filter);
+            res.send(result);
+        })
 
 
+        //addwish
+
+
+        app.put('/wishCollection', async (req, res) => {
+            const wishes = req.body;
+            console.log(wishes);
+            const option = { upsert: true };
+            const Updateadd = {
+                $set: {
+                    pic: wishes.pic,
+                    resalePrice: wishes.resalePrice,
+                    condition: wishes.condition,
+                    title: wishes.title,
+                    CategoryId: wishes.CategoryId,
+                    originalPrice: wishes.originalPrice,
+                    location: wishes.location,
+                    PostTime: wishes.PostTime,
+                    condition: wishes.condition,
+                    SellerName: wishes.SellerName
+                }
+            }
+            const result = await wishCollection.updateOne(wishes, Updateadd, option);
+            res.send(result);
+        });
+
+
+        app.get('/wishCollection/:uid', async (req, res) => {
+
+            const uid = req.params.uid;
+            const query = { uid }
+            console.log(uid);
+            const cursor = await wishCollection.find(query);
+            const wish = await cursor.toArray();
+            res.send(wish);
+
+        });
 
     }
     finally {
