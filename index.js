@@ -218,27 +218,27 @@ async function run() {
 
         //edit
 
-        app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
+        // app.put('/allusers/seller/:id', verifyJWT, async (req, res) => {
 
-            // const decodedEmail = req.decoded.email;
-            // const query = { email: decodedEmail };
-            // const user = await usersCollection.findOne(query);
+        //     // const decodedEmail = req.decoded.email;
+        //     // const query = { email: decodedEmail };
+        //     // const user = await usersCollection.findOne(query);
 
-            // if (user?.role !== 'admin') {
-            //     return res.status(403).send({ message: 'forbidden access' })
-            // }
+        //     // if (user?.role !== 'admin') {
+        //     //     return res.status(403).send({ message: 'forbidden access' })
+        //     // }
 
-            const id = req.params.id;
-            const filter = { _id: ObjectId(id) }
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    role: 'seller'
-                }
-            }
-            const result = await usersCollection.updateOne(filter, updatedDoc, options);
-            res.send(result);
-        })
+        //     const id = req.params.id;
+        //     const filter = { _id: ObjectId(id) }
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             role: 'seller'
+        //         }
+        //     }
+        //     const result = await usersCollection.updateOne(filter, updatedDoc, options);
+        //     res.send(result);
+        // })
 
         //edit
 
@@ -297,7 +297,6 @@ async function run() {
 
         //myproducts fetch
 
-
         app.get('/allbookscategory/seller/:SellerName', async (req, res) => {
 
             const SellerName = req.params.SellerName;
@@ -308,6 +307,43 @@ async function run() {
             res.send(products);
 
         });
+
+        //delete buyer
+
+        // app.delete('/orders/:id', verifyJWT, async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const result = await reviewCollection.deleteOne(query);
+        //     res.send(result);
+        // })
+
+
+        app.get('/allusers/:id', async (req, res) => {
+
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await usersCollection.findOne(filter);
+            res.send(result);
+        })
+
+        app.delete('/allusers/:id', async (req, res) => {
+
+
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const result = await usersCollection.deleteOne(filter);
+            res.send(result);
+        })
+
+
+        // app.delete('/doctors/:id', verifyJWT, verifyAdmin, async (req, res) => {
+        //     const id = req.params.id;
+        //     const filter = { _id: ObjectId(id) };
+        //     const result = await doctorsCollection.deleteOne(filter);
+        //     res.send(result);
+        // })
+
 
 
 
