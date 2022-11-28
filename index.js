@@ -85,7 +85,7 @@ async function run() {
 
         //all orders
 
-        app.get('/allbookings', async (req, res) => {
+        app.get('/allbookings', verifyJWT, async (req, res) => {
 
             const query = {}
             const cursor = bookingCollection.find(query);
@@ -135,9 +135,24 @@ async function run() {
         //alluser
 
 
-        app.get('/allusers', async (req, res) => {
+        app.get('/allusers', verifyJWT, async (req, res) => {
 
-            const query = {}
+            const decoded = req.decoded;
+
+            if (decoded.email !== req.query.email) {
+                res.status(403).send({ message: 'unauthorized access' })
+            }
+
+            let query = {};
+
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+
+
+            query = {}
             const cursor = usersCollection.find(query);
             const mybook = await cursor.toArray();
             res.send(mybook);
@@ -147,7 +162,7 @@ async function run() {
         //specific users filtered with email
 
 
-        app.get('/users', async (req, res) => {
+        app.get('/users', verifyJWT, async (req, res) => {
 
             const email = req.query.email;
             console.log(email);
